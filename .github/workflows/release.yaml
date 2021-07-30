@@ -21,10 +21,10 @@ jobs:
         uses: actions/checkout@master
       
       - name: build linux
-        run: GOOS=linux go build -a -v -installsuffix cgo -ldflags="-w -s" -o solana_exporter-linux .
+        run: GOOS=linux go build -a -v -installsuffix cgo -ldflags="-w -s" -o solana_exporter-linux github.com/egeneralov/solana_exporter/cmd/solana_exporter
       
       - name: build darwin
-        run: GOOS=darwin go build -a -v -installsuffix cgo -ldflags="-w -s" -o solana_exporter-darwin .
+        run: GOOS=darwin go build -a -v -installsuffix cgo -ldflags="-w -s" -o solana_exporter-darwin github.com/egeneralov/solana_exporter/cmd/solana_exporter
 
       - name: docker login
         uses: docker/login-action@v1

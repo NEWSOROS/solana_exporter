@@ -12,7 +12,7 @@ WORKDIR /go/src/github.com/egeneralov/solana_exporter
 ADD go.mod go.sum /go/src/github.com/egeneralov/solana_exporter/
 RUN go mod download -x
 ADD . .
-RUN go build -v -installsuffix cgo -ldflags="-w -s" -o /go/bin/solana_exporter .
+RUN go build -v -installsuffix cgo -ldflags="-w -s" -o /go/bin/solana_exporter github.com/egeneralov/solana_exporter/cmd/solana_exporter
 
 
 FROM debian:buster
