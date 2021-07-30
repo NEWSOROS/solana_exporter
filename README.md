@@ -13,7 +13,7 @@ Metrics tracked with confirmation level `recent`:
 - **solana_validator_root_slot** - Latest root seen by each validator.
 - **solana_validator_last_vote** - Latest vote by each validator (not necessarily on the majority fork!)
 - **solana_validator_delinquent** - Whether node considers each validator to be delinquent.
-- **solana_validator_activated_stake**  - Active stake for each validator. 
+- **solana_validator_activated_stake**  - Active stake for each validator.
 - **solana_active_validators** - Total number of active/delinquent validators.
 
 Metrics tracked with confirmation level `max`:
@@ -30,7 +30,7 @@ Metrics tracked with confirmation level `max`:
 You typically only need to set the RPC URL, pointing to one of your own nodes:
 
     ./solana_exporter -rpcURI=http://yournode:8899
-    
+
 If you want verbose logs, specify `-v=<num>`. Higher verbosity means more debug output. For most users, the default
 verbosity level is fine. If you want detailed log output for missed blocks, run with `-v=1`.
 

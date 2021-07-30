@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/certusone/solana_exporter/pkg/rpc"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/certusone/solana_exporter/pkg/monitor"
+	"github.com/certusone/solana_exporter/pkg/rpc"
 
 	"k8s.io/klog/v2"
 )
@@ -17,8 +20,10 @@ const (
 )
 
 var (
-	rpcAddr = flag.String("rpcURI", "", "Solana RPC URI (including protocol and path)")
-	addr    = flag.String("addr", ":8080", "Listen address")
+	rpcAddr       = flag.String("rpcURI", "", "Solana RPC URI (including protocol and path)")
+	addr          = flag.String("addr", "0.0.0.0:8080", "Listen address")
+	pathToScript  = flag.String("script", "./monitor.sh", "Listen address")
+		solanaMetrics = flag.Bool("solanaMetrics", false, "solanaMetrics")
 )
 
 func init() {
@@ -90,33 +95,42 @@ func (c *solanaCollector) mustEmitMetrics(ch chan<- prometheus.Metric, response 
 }
 
 func (c *solanaCollector) Collect(ch chan<- prometheus.Metric) {
-	ctx, cancel := context.WithTimeout(context.Background(), httpTimeout)
-	defer cancel()
+	if *solanaMetrics {
+		ctx, cancel := context.WithTimeout(context.Background(), httpTimeout)
+		defer cancel()
 
-	accs, err := c.rpcClient.GetVoteAccounts(ctx, rpc.CommitmentRecent)
-	if err != nil {
-		ch <- prometheus.NewInvalidMetric(c.totalValidatorsDesc, err)
-		ch <- prometheus.NewInvalidMetric(c.validatorActivatedStake, err)
-		ch <- prometheus.NewInvalidMetric(c.validatorLastVote, err)
-		ch <- prometheus.NewInvalidMetric(c.validatorRootSlot, err)
-		ch <- prometheus.NewInvalidMetric(c.validatorDelinquent, err)
-	} else {
-		c.mustEmitMetrics(ch, accs)
+		accs, err := c.rpcClient.GetVoteAccounts(ctx, rpc.CommitmentRecent)
+		if err != nil {
+			ch <- prometheus.NewInvalidMetric(c.totalValidatorsDesc, err)
+			ch <- prometheus.NewInvalidMetric(c.validatorActivatedStake, err)
+			ch <- prometheus.NewInvalidMetric(c.validatorLastVote, err)
+			ch <- prometheus.NewInvalidMetric(c.validatorRootSlot, err)
+			ch <- prometheus.NewInvalidMetric(c.validatorDelinquent, err)
+		} else {
+			c.mustEmitMetrics(ch, accs)
+		}
 	}
+
 }
 
 func main() {
 	flag.Parse()
 
+	monitor.NewParsedResult()
+
 	if *rpcAddr == "" {
 		klog.Fatal("Please specify -rpcURI")
 	}
 
-	collector := NewSolanaCollector(*rpcAddr)
+	solanaCollector := NewSolanaCollector(*rpcAddr)
+	monitorCollector := monitor.NewCollector(*pathToScript)
 
-	go collector.WatchSlots()
+	if *solanaMetrics {
+		go solanaCollector.WatchSlots()
+	}
 
-	prometheus.MustRegister(collector)
+	prometheus.MustRegister(solanaCollector)
+	prometheus.MustRegister(monitorCollector)
 	http.Handle("/metrics", promhttp.Handler())
 
 	klog.Infof("listening on %s", *addr)

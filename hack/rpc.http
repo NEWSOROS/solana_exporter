@@ -20,7 +20,9 @@ Content-Type: application/json
   "jsonrpc": "2.0",
   "id": 1,
   "method": "getLeaderSchedule",
-  "params": [56252256]
+  "params": [
+    56252256
+  ]
 }
 
 ###
@@ -43,7 +45,9 @@ Content-Type: application/json
   "jsonrpc": "2.0",
   "id": 1,
   "method": "getEpochInfo",
-  "params": ["max"]
+  "params": [
+    "max"
+  ]
 }
 
 ###
@@ -55,7 +59,9 @@ Content-Type: application/json
   "jsonrpc": "2.0",
   "id": 1,
   "method": "getConfirmedBlocks",
-  "params": [56610214]
+  "params": [
+    56610214
+  ]
 }
 
 ###
@@ -67,7 +73,10 @@ Content-Type: application/json
   "jsonrpc": "2.0",
   "id": 1,
   "method": "getConfirmedBlock",
-  "params": [56600576, "jsonParsed"]
+  "params": [
+    56600576,
+    "jsonParsed"
+  ]
 }
 
 ###
@@ -79,7 +88,9 @@ Content-Type: application/json
   "jsonrpc": "2.0",
   "id": 1,
   "method": "getBlockTime",
-  "params": [56611148]
+  "params": [
+    56611148
+  ]
 }
 
 ###

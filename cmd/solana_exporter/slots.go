@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/certusone/solana_exporter/pkg/rpc"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"k8s.io/klog/v2"
-	"time"
+
+	"github.com/certusone/solana_exporter/pkg/rpc"
 )
 
 const (

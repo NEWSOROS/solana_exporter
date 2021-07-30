@@ -1,13 +1,26 @@
-FROM golang:1.15 as builder
+FROM golang:1.15.6
 
-COPY . /opt
-WORKDIR /opt
+RUN apt-get update -q && apt-get install -yq ca-certificates
 
-RUN CGO_ENABLED=0 go build -o /opt/bin/app github.com/certusone/solana_exporter/cmd/solana_exporter
+ENV \
+  GO111MODULE=on \
+  CGO_ENABLED=0 \
+  GOOS=linux \
+  GOARCH=amd64
 
-FROM scratch
+WORKDIR /go/src/github.com/egeneralov/solana_exporter
+ADD go.mod go.sum /go/src/github.com/egeneralov/solana_exporter/
+RUN go mod download -x
+ADD . .
+RUN go build -v -installsuffix cgo -ldflags="-w -s" -o /go/bin/solana_exporter .
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /opt/bin/app /
 
-ENTRYPOINT ["/app"]
+FROM debian:buster
+
+RUN apt-get update -q && apt-get install -yq ca-certificates
+USER nobody
+ENV PATH='/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+CMD /go/bin/solana_exporter
+
+COPY --from=0 /go/bin /go/bin
+COPY --from=0 /go/src/github.com/egeneralov/solana_exporter/monitor.sh /go/bin/monitor.sh
