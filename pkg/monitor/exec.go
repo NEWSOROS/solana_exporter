@@ -14,7 +14,7 @@ func Exec(args ...string) (string, error) {
 	cmdArgs := args[1:]
 
 	cmd := exec.Command(baseCmd, cmdArgs...)
-	out, err := cmd.Output()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", err
 	}

@@ -204,7 +204,7 @@ func (self *Collector) Collect(ch chan<- prometheus.Metric) {
 	src, err := Exec("/bin/bash", "-e", self.pathToScript)
 	result := NewParsedResult().Parse(src)
 	if err != nil {
-		klog.Error("/bin/bash -e " + self.pathToScript + ": ", err)
+		klog.Error("/bin/bash -e " + self.pathToScript + ": ", err, " | ", src)
 		ch <- prometheus.NewInvalidMetric(self.descStatus, err)
 		ch <- prometheus.NewInvalidMetric(self.descOpenFiles, err)
 		ch <- prometheus.NewInvalidMetric(self.descEpoch, err)
