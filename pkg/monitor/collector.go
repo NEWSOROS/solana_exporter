@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
+	"k8s.io/klog/v2"
 )
 
 type Collector struct {
@@ -203,6 +204,7 @@ func (self *Collector) Collect(ch chan<- prometheus.Metric) {
 	src, err := Exec("/bin/bash", "-e", self.pathToScript)
 	result := NewParsedResult().Parse(src)
 	if err != nil {
+		klog.Error("/bin/bash -e " + self.pathToScript + ": ", err)
 		ch <- prometheus.NewInvalidMetric(self.descStatus, err)
 		ch <- prometheus.NewInvalidMetric(self.descOpenFiles, err)
 		ch <- prometheus.NewInvalidMetric(self.descEpoch, err)
