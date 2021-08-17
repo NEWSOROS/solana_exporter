@@ -187,7 +187,7 @@ func NewCollector(pathToScript string) *Collector {
 		descPercentNewerVersions: prometheus.NewDesc(
 			"solana_monitor_percent_newer_versions",
 			"",
-			[]string{"pubkey"},
+			[]string{"version"},
 			nil,
 		),
 		descPercentEpochElapsed: prometheus.NewDesc(
@@ -204,7 +204,7 @@ func (self *Collector) Collect(ch chan<- prometheus.Metric) {
 	src, err := Exec("/bin/bash", "-e", self.pathToScript)
 	result := NewParsedResult().Parse(src)
 	if err != nil {
-		klog.Error("/bin/bash -e " + self.pathToScript + ": ", err, " | ", src)
+		klog.Error("/bin/bash -e "+self.pathToScript+": ", err, " | ", src)
 		ch <- prometheus.NewInvalidMetric(self.descStatus, err)
 		ch <- prometheus.NewInvalidMetric(self.descOpenFiles, err)
 		ch <- prometheus.NewInvalidMetric(self.descEpoch, err)
@@ -357,7 +357,7 @@ func (self *Collector) mustEmitMetrics(ch chan<- prometheus.Metric, result *Pars
 		self.descPercentNewerVersions,
 		prometheus.GaugeValue,
 		result.PercentNewerVersions,
-		result.PublicKey,
+		result.Version,
 	)
 	ch <- prometheus.MustNewConstMetric(
 		self.descPercentEpochElapsed,
