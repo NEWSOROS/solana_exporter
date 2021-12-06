@@ -29,7 +29,7 @@ type Collector struct {
 	descPercentTotalDelinquent  *prometheus.Desc
 	descPercentNewerVersions    *prometheus.Desc
 	descPercentEpochElapsed     *prometheus.Desc
-	descEpochEnd         *prometheus.Desc
+	descEpochEnd                *prometheus.Desc
 }
 
 func (self *Collector) Describe(descs chan<- *prometheus.Desc) {
