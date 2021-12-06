@@ -29,7 +29,7 @@ type Collector struct {
 	descPercentTotalDelinquent  *prometheus.Desc
 	descPercentNewerVersions    *prometheus.Desc
 	descPercentEpochElapsed     *prometheus.Desc
-	descPercentEpochEnd         *prometheus.Desc
+	descEpochEnd         *prometheus.Desc
 }
 
 func (self *Collector) Describe(descs chan<- *prometheus.Desc) {
@@ -55,7 +55,7 @@ func (self *Collector) Describe(descs chan<- *prometheus.Desc) {
 	descs <- self.descPercentTotalDelinquent
 	descs <- self.descPercentNewerVersions
 	descs <- self.descPercentEpochElapsed
-	descs <- self.descPercentEpochEnd
+	descs <- self.descEpochEnd
 }
 
 func NewCollector(pathToScript string) *Collector {
