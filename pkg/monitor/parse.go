@@ -29,6 +29,8 @@ type (
 		ValidatorVoteBalance    float64 `json:"validatorVoteBalance"`
 		Nodes                   float64 `json:"nodes"`
 		Epoch                   float64 `json:"epoch"`
+		EpochEnds               string  `json:"epochEnds"`
+		PercentVote             float64 `json:"pctVote"`
 		ValidatorCreditsCurrent float64 `json:"validatorCreditsCurrent"`
 		Version                 string  `json:"version"`
 	}
