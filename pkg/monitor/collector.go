@@ -29,6 +29,7 @@ type Collector struct {
 	descPercentTotalDelinquent  *prometheus.Desc
 	descPercentNewerVersions    *prometheus.Desc
 	descPercentEpochElapsed     *prometheus.Desc
+	descPercentEpochEnd         *prometheus.Desc
 }
 
 func (self *Collector) Describe(descs chan<- *prometheus.Desc) {
@@ -54,6 +55,7 @@ func (self *Collector) Describe(descs chan<- *prometheus.Desc) {
 	descs <- self.descPercentTotalDelinquent
 	descs <- self.descPercentNewerVersions
 	descs <- self.descPercentEpochElapsed
+	descs <- self.descPercentEpochEnd
 }
 
 func NewCollector(pathToScript string) *Collector {
@@ -196,6 +198,12 @@ func NewCollector(pathToScript string) *Collector {
 			[]string{"pubkey"},
 			nil,
 		),
+		descEpochEnd: prometheus.NewDesc(
+			"solana_monitor_epoch_end",
+			"",
+			[]string{"pubkey"},
+			nil,
+		),
 	}
 }
 
@@ -226,6 +234,7 @@ func (self *Collector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.NewInvalidMetric(self.descPercentTotalDelinquent, err)
 		ch <- prometheus.NewInvalidMetric(self.descPercentNewerVersions, err)
 		ch <- prometheus.NewInvalidMetric(self.descPercentEpochElapsed, err)
+		ch <- prometheus.NewInvalidMetric(self.descEpochEnd, err)
 	} else {
 		self.mustEmitMetrics(
 			ch,
@@ -363,6 +372,12 @@ func (self *Collector) mustEmitMetrics(ch chan<- prometheus.Metric, result *Pars
 		self.descPercentEpochElapsed,
 		prometheus.GaugeValue,
 		result.PercentEpochElapsed,
+		result.PublicKey,
+	)
+	ch <- prometheus.MustNewConstMetric(
+		self.descEpochEnd,
+		prometheus.GaugeValue,
+		result.EpochEnd,
 		result.PublicKey,
 	)
 }
