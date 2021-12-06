@@ -76,6 +76,8 @@ func (result *ParsedResult) Parse(src string) *ParsedResult {
 				if err == nil {
 					result.Epoch = float64(i)
 				}
+			case "epochEnds":
+				result.EpochEnds = strings.Replace(s[1], "\"", "", -1)
 			case "nodes":
 				i, err := strconv.Atoi(s[1])
 				if err == nil {
@@ -145,6 +147,11 @@ func (result *ParsedResult) Parse(src string) *ParsedResult {
 				i, err := strconv.ParseFloat(s[1], 64)
 				if err == nil {
 					result.PercentEpochElapsed = i
+				}
+			case "pctVote":
+				i, err := strconv.ParseFloat(s[1], 64)
+				if err == nil {
+					result.PercentVote = i
 				}
 			case "pctTotSkipped":
 				i, err := strconv.ParseFloat(s[1], 64)
